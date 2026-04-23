@@ -47,7 +47,7 @@ CHUTE_DE_NUMERO = "NUMBER"
 CHUTE_DE_REGRA = "RULE"
 
 def player(number_guesses, rule_guesses):
-    print('ola carioca')
+
     """Função principal do jogador. 
     
     Exemplo de estratégia: chutar regras aleatórias.
