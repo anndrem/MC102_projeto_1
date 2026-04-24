@@ -49,7 +49,7 @@ CHUTE_DE_REGRA = "RULE"
 
 def mod():
     """verificar resto"""
-    return 0
+    return 0    
 
 def pot():
     """verificar potencia"""
