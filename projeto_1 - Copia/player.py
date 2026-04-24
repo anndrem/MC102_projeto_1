@@ -46,6 +46,19 @@ import random
 CHUTE_DE_NUMERO = "NUMBER"
 CHUTE_DE_REGRA = "RULE"
 
+
+def mod():
+    """verificar resto"""
+    return 0
+
+def pot():
+    """verificar potencia"""
+    return 0
+
+def intervalo():
+    """verificar intervalo"""
+    return 0
+
 def player(number_guesses, rule_guesses):
 
     """Função principal do jogador. 
