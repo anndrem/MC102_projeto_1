@@ -1,6 +1,6 @@
 ### TODO: PREENCHA SUAS INFORMAÇÕES AQUI ###
-# Nome #01 (quem entregou o código):    [NOME COMPLETO #01] 
-# RA #01 (quem entregou o código):      [RA #01]
+# Nome #01 (quem entregou o código):    André de Almeida Maximiano 
+# RA #01 (quem entregou o código):      306387
 # Nome #02:                             [NOME COMPLETO #02]
 # RA #02:                               [RA #02]
 
@@ -45,40 +45,65 @@ import random
 
 CHUTE_DE_NUMERO = "NUMBER"
 CHUTE_DE_REGRA = "RULE"
+CHUTES_ANTERIORES = {}
+
+CHUTES_ANTERIORES[CHUTE_DE_NUMERO] = []
+CHUTES_ANTERIORES[CHUTE_DE_REGRA] = []
 
 
-def mod():
-    """verificar resto"""
-    return 0
+def chute_numerio():
+    if len(CHUTES_ANTERIORES[CHUTE_DE_NUMERO]) == 0:
+        return random.randint(0, 100)
+    item = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1]
+    if item[1] == 'maior':
+        return random.randint(item[0], item[0] + 100)
+    
+    return random.randint(0, item[0])
 
-def pot():
-    """verificar potencia"""
-    return 0
+def chute_regra(n):
+    TIPO = random.choice(["mod", "pot", "int"])
+    
+    if TIPO == "mod":
+        k = random.randint(n, 100)
+        r = random.randint(0, k - 1)
+        chute = [TIPO, k, r]
+    elif TIPO == "pot":
+        # p = random.randint(2, 10)
+        chute = [TIPO, n, 0]
+    else:
+        a = random.randint(1, n) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
+        b = random.randint(a, min(100_000, a + 100))
+        chute = [TIPO, a, b]
 
-def intervalo():
-    """verificar intervalo"""
-    return 0
+    chute_atual = [CHUTE_DE_REGRA, chute]
+    
+    CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(chute_atual[1])
+    
+    return chute_atual
+
 
 def player(number_guesses, rule_guesses):
     """Função principal do jogador. 
     
     Exemplo de estratégia: chutar regras aleatórias.
     """
+    # comecando a partida: 
+    try:
+        n = chute_numerio()
+        if(len(number_guesses) == 0):
+                return [CHUTE_DE_NUMERO, n]
+        
+        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
+        while(not number_guesses[-1][-1]): 
+            return [CHUTE_DE_NUMERO,n]
+    
+        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
+        if number_guesses[-1]:
+            return chute_regra(n)
+    
+        CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
 
-    
-    
-    TIPO = random.choice(["mod", "pot", "int"])
-    
-    if TIPO == "mod":
-        k = random.randint(2, 100)
-        r = random.randint(0, k - 1)
-        chute = [TIPO, k, r]
-    elif TIPO == "pot":
-        p = random.randint(2, 10)
-        chute = [TIPO, p, 0]
-    else:
-        a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
-        b = random.randint(a, min(100_000, a + 100))
-        chute = [TIPO, a, b]
-    
-    return [CHUTE_DE_REGRA, chute]
+        return [CHUTE_DE_NUMERO,chute_numerio()]
+    except Exception as e:
+        print('Erro no código: ', e)
+
