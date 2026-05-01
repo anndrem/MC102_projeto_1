@@ -65,6 +65,8 @@ def player(number_guesses, rule_guesses):
     
     Exemplo de estratégia: chutar regras aleatórias.
     """
+
+    
     
     TIPO = random.choice(["mod", "pot", "int"])
     
