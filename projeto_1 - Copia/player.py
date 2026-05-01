@@ -1,8 +1,8 @@
 ### TODO: PREENCHA SUAS INFORMAÇÕES AQUI ###
 # Nome #01 (quem entregou o código):    André de Almeida Maximiano 
 # RA #01 (quem entregou o código):      306387
-# Nome #02:                             [NOME COMPLETO #02]
-# RA #02:                               [RA #02]
+# Nome #02:                             Vinicius Brasil Turibio da Silva
+# RA #02:                               306565
 
 """Implemente aqui o seu código para adivinhar a regra.
 
