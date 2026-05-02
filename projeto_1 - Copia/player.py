@@ -1,3 +1,5 @@
+import traceback
+import math
 ### TODO: PREENCHA SUAS INFORMAÇÕES AQUI ###
 # Nome #01 (quem entregou o código):    André de Almeida Maximiano 
 # RA #01 (quem entregou o código):      306387
@@ -50,36 +52,53 @@ CHUTES_ANTERIORES = {}
 CHUTES_ANTERIORES[CHUTE_DE_NUMERO] = []
 CHUTES_ANTERIORES[CHUTE_DE_REGRA] = []
 
-
-def chute_numerio():
+MAIOR = []
+NUMEROS_CORRETOS = []
+def chute_numerico():
+    # criar intervalo entre maior e menor 
     if len(CHUTES_ANTERIORES[CHUTE_DE_NUMERO]) == 0:
-        return random.randint(0, 100)
-    item = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1]
-    if item[1] == 'maior':
-        return random.randint(item[0], item[0] + 100)
+        return random.randint(1, 10)
     
-    return random.randint(0, item[0])
+    
+    chute_recente = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1]
+    if len(CHUTES_ANTERIORES[CHUTE_DE_NUMERO]) >= 2:
+        if CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0] == 'maior' and  CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0] == 'menor':
+            if CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0] < CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0]:
+                print(f'{CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0]} - {CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0]}')
+                return random.randint(CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0], CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0])
+        if CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0] == 'menor' and  CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0] == 'maior':
+            if CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0] > CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0]:
+                print(f'{CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0]} - {CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0]}')
+                return random.randint(CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-2][0], CHUTES_ANTERIORES[CHUTE_DE_NUMERO][-1][-1][0])
+    
+    if chute_recente[2]:
+        return chute_recente[0]*2
+
+    if chute_recente[1] == 'maior':
+        return random.randint(chute_recente[0], chute_recente[0] * 2)
+    if chute_recente[0] > 1:
+        if len(NUMEROS_CORRETOS): 
+            return random.randint(NUMEROS_CORRETOS[0]//2, NUMEROS_CORRETOS[0])
+        return random.randint(chute_recente[0]//2, chute_recente[0])
+    return random.randint(chute_recente[0], 10)
+    
 
 def chute_regra(n):
     TIPO = random.choice(["mod", "pot", "int"])
     
     if TIPO == "mod":
-        k = random.randint(n, 100)
+        k = random.randint(n, n + 100)
         r = random.randint(0, k - 1)
         chute = [TIPO, k, r]
     elif TIPO == "pot":
         # p = random.randint(2, 10)
-        chute = [TIPO, n, 0]
+        chute = [TIPO, math.sqrt(n), 0]
     else:
         a = random.randint(1, n) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
         b = random.randint(a, min(100_000, a + 100))
         chute = [TIPO, a, b]
-
-    chute_atual = [CHUTE_DE_REGRA, chute]
     
-    CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(chute_atual[1])
-    
-    return chute_atual
+    return chute
 
 
 def player(number_guesses, rule_guesses):
@@ -89,21 +108,25 @@ def player(number_guesses, rule_guesses):
     """
     # comecando a partida: 
     try:
-        n = chute_numerio()
+        n = chute_numerico()
         if(len(number_guesses) == 0):
                 return [CHUTE_DE_NUMERO, n]
         
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
-        while(not number_guesses[-1][-1]): 
+        while(len(NUMEROS_CORRETOS) <= 5):
+            n = chute_numerico()
+            while(n in NUMEROS_CORRETOS):
+                n = chute_numerico()
+            if number_guesses[-1][-1]:
+                NUMEROS_CORRETOS.append(number_guesses[-1][0])
             return [CHUTE_DE_NUMERO,n]
-    
-        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
-        if number_guesses[-1]:
-            return chute_regra(n)
-    
-        CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
+            
 
-        return [CHUTE_DE_NUMERO,chute_numerio()]
+        if len(rule_guesses) > 0:
+            CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
+        return chute_regra(n)
+            
     except Exception as e:
-        print('Erro no código: ', e)
+        print('Erro no código: ')
+        traceback.print_exc()
 
