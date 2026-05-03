@@ -64,7 +64,6 @@ def chute_regra(chutes_certos):
     
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
-        chute = ["pot"]
         valores = []
         for n in chutes_certos:
             #verifica valores de p que satisfazem a regra para cada n na lista
@@ -82,7 +81,8 @@ def chute_regra(chutes_certos):
                 if p not in comuns:
                     comuns.append(p)
         if len(comuns) == 1: #quando é encontrada uma unica regra possivel para n,ou seja, a regra do jogo
-                chute.extend(comuns)      
+                comuns.append(0)
+                chute = ["pot"] + comuns  
                 return chute
         elif len(comuns) > 1:  #para o caso de existirem mais de uma regra possivel para n
             chute = []
@@ -94,10 +94,8 @@ def chute_regra(chutes_certos):
     
     def mod(chutes_certos):
         """verifica valores de k e r que satisfazem a regra para todos os chutes e os retornam, caso exitam """
-        chutes = [] #usaremos essa lista para o caso de multiplos [k,r] possiveis para n
         valores = [] #valores de [k,r] válidos para cada n em chutes_certos
         for n in chutes_certos:
-            
             for k in range(2,101):
                 for r in range(0,k):
                     if n%k == r:
@@ -112,15 +110,15 @@ def chute_regra(chutes_certos):
                     comuns.append([k,r])       
         #verificando quando se há uma ou múltiplas regras válidas para todo n em chutes_certos
         if len(comuns) == 1:
-            chute = ["mod"].extend(comuns[0])
+            chute = ["mod"] + (comuns[0])
             return chute    
         elif len(comuns) > 1:
-            for [k,r] in comuns:
-                chute = ["mod"].extend([k,r])
+            chutes = []
+            for i in comuns:
+                chute = ["mod"] + i
                 chutes.append(chute)
                 return chutes
         return None
-    
     if pot(chutes_certos):
         return pot(chutes_certos)
     elif mod(chutes_certos):
