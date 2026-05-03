@@ -78,27 +78,31 @@ def chute_regra(chutes_certos):
                 k = round(n**(1/p))
                 if k**p != n:    #quando é encontrado um valor de n que não se aplica para a regra, o loop é quebrado
                     break
-            else:
+            else: # quando é encontrado um valor de p que vale para todo n na lista,ou seja, quando o loop nao quebra
                 if p not in comuns:
                     comuns.append(p)
-                    comuns.append(0)
-        if len(comuns) != 0:
-                chute.extend(comuns)          
-                return chute          
+        if len(comuns) == 1: #quando é encontrada uma unica regra possivel para n,ou seja, a regra do jogo
+                chute.extend(comuns)      
+                return chute
+        elif len(comuns) > 1:  #para o caso de existirem mais de uma regra possivel para n
+            chute = []
+            for p in comuns:
+                lista = ["pot",p,0]
+                chute.append(lista)
+            return chute
         return None    
     
     def mod(chutes_certos):
         """verifica valores de k e r que satisfazem a regra para todos os chutes e os retornam, caso exitam """
-        chute = ["mod"]
-        valores = []
+        chutes = [] #usaremos essa lista para o caso de multiplos [k,r] possiveis para n
+        valores = [] #valores de [k,r] válidos para cada n em chutes_certos
         for n in chutes_certos:
             
             for k in range(2,101):
                 for r in range(0,k):
                     if n%k == r:
                         valores.append([k,r])
-                    
-        comuns = [] # [k,r] comuns para todo n no chute de numero
+        comuns = [] # [k,r] comuns para todo n em chutees_certos
         for [k,r] in valores:
             for n in chutes_certos:
                 if n%k != r:
@@ -106,23 +110,28 @@ def chute_regra(chutes_certos):
             else: #quando o loop não quebrar, ou seja, houver [k,r] valido para todo n
                 if [k,r] not in comuns:
                     comuns.append([k,r])       
-        if len(comuns) != 0:
-            chute.extend(comuns)
-            return chute
+        #verificando quando se há uma ou múltiplas regras válidas para todo n em chutes_certos
+        if len(comuns) == 1:
+            chute = ["mod"].extend(comuns[0])
+            return chute    
+        elif len(comuns) > 1:
+            for [k,r] in comuns:
+                chute = ["mod"].extend([k,r])
+                chutes.append(chute)
+                return chutes
         return None
     
     if pot(chutes_certos):
-        chute_atual = [CHUTE_DE_REGRA,pot(chutes_certos)]
+        return pot(chutes_certos)
     elif mod(chutes_certos):
-        chute_atual = [CHUTE_DE_REGRA,mod(chutes_certos)]
+        return mod(chutes_certos)
     else:
         a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
         b = random.randint(a, min(100_000, a + 100))
         chute = ["int", a, b]
-        chute_atual = [CHUTE_DE_REGRA,chute]
+        return chute
     
-    CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(chute_atual[1])    
-    return chute_atual
+    
 
 
 def player(number_guesses, rule_guesses):
