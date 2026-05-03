@@ -60,25 +60,68 @@ def chute_numerio():
     
     return random.randint(0, item[0])
 
-def chute_regra(n):
-    TIPO = random.choice(["mod", "pot", "int"])
+def chute_regra(chutes_certos):
     
-    if TIPO == "mod":
-        k = random.randint(n, 100)
-        r = random.randint(0, k - 1)
-        chute = [TIPO, k, r]
-    elif TIPO == "pot":
-        # p = random.randint(2, 10)
-        chute = [TIPO, n, 0]
+    def pot(chutes_certos):
+        """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
+        chute = ["pot"]
+        valores = []
+        for n in chutes_certos:
+            #verifica valores de p que satisfazem a regra para cada n na lista
+            for p in range(2,11):
+                k = round(n**(1/p))
+                if k**p == n:
+                    valores.append(p)
+        comuns = []   #valores de p comuns para todo n na lista
+        for p in valores:
+            for n in chutes_certos:
+                k = round(n**(1/p))
+                if k**p != n:    #quando é encontrado um valor de n que não se aplica para a regra, o loop é quebrado
+                    break
+            else:
+                if p not in comuns:
+                    comuns.append(p)
+                    comuns.append(0)
+        if len(comuns) != 0:
+                chute.extend(comuns)          
+                return chute          
+        return None    
+    
+    def mod(chutes_certos):
+        """verifica valores de k e r que satisfazem a regra para todos os chutes e os retornam, caso exitam """
+        chute = ["mod"]
+        valores = []
+        for n in chutes_certos:
+            
+            for k in range(2,101):
+                for r in range(0,k):
+                    if n%k == r:
+                        valores.append([k,r])
+                    
+        comuns = [] # [k,r] comuns para todo n no chute de numero
+        for [k,r] in valores:
+            for n in chutes_certos:
+                if n%k != r:
+                    break
+            else: #quando o loop não quebrar, ou seja, houver [k,r] valido para todo n
+                if [k,r] not in comuns:
+                    comuns.append([k,r])       
+        if len(comuns) != 0:
+            chute.extend(comuns)
+            return chute
+        return None
+    
+    if pot(chutes_certos):
+        chute_atual = [CHUTE_DE_REGRA,pot(chutes_certos)]
+    elif mod(chutes_certos):
+        chute_atual = [CHUTE_DE_REGRA,mod(chutes_certos)]
     else:
-        a = random.randint(1, n) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
+        a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
         b = random.randint(a, min(100_000, a + 100))
-        chute = [TIPO, a, b]
-
-    chute_atual = [CHUTE_DE_REGRA, chute]
+        chute = ["int", a, b]
+        chute_atual = [CHUTE_DE_REGRA,chute]
     
-    CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(chute_atual[1])
-    
+    CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(chute_atual[1])    
     return chute_atual
 
 
