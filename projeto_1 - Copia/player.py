@@ -84,7 +84,7 @@ def chute_numerico(intervalo, acertou):
     ultimo_numero = anterior[0]
     proximidade = anterior[1]
     if acertou:
-        print(f'ULTIMO NUMERO ESTÁ CORRETO: {ultimo_numero}')
+        print(f'ULTIMO NUMERO ESTÁ CORRETO: {ultimo_numero}\nSAINDO DO INTERVALO: [{MAIOR},{MENOR}]')
         return ultimo_numero + 1000
     
     if intervalo:
@@ -184,6 +184,7 @@ def player(number_guesses, rule_guesses):
             return [CHUTE_DE_REGRA, regra]
 
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
+        CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
        
 
         """ CHUTE INICIAL
