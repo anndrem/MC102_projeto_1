@@ -61,7 +61,7 @@ def chute_numerio():
     return random.randint(0, item[0])
 
 def chute_regra(chutes_certos):
-    
+    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
         valores = [] # armazena valores de p que satisfazem a
