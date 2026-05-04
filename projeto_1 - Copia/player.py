@@ -118,6 +118,7 @@ def chute_regra(chutes_certos):
     
     elif mod(chutes_certos):
         chute = random.choice(pot(chutes_certos))
+        return chute
     else:
         a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
         b = random.randint(a, min(100_000, a + 100))
