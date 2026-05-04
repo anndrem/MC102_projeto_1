@@ -181,7 +181,7 @@ def player(number_guesses, rule_guesses):
         if len(NUMEROS_CORRETOS) == 3:
             print(f'{len(NUMEROS_CORRETOS)} CHUTES NUMERICOS CORRETOS')
             regra = chute_regra(NUMEROS_CORRETOS)
-            return [CHUTE_DE_REGRA]
+            return [CHUTE_DE_REGRA, regra]
 
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
        
@@ -213,7 +213,8 @@ def player(number_guesses, rule_guesses):
             n = chute_numerico(not intervalo, anterior[2])
         
         # verificando n
-        if n < 0 and n > 100_000:
+        if n <= 0 or n > 100_000:
+            print(f'CUIDADO: {n} fora do intervalo!\nRecalculando...')
             n = buscar_intervalo(anterior[1])
 
         return [CHUTE_DE_NUMERO, n]
