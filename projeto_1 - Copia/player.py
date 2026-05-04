@@ -157,8 +157,7 @@ def chute_regra(chutes_certos):
         a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
         b = random.randint(a, min(100_000, a + 100))
         chute = ["int", a, b]
-    
-    return chute
+        return chute
         # chute = ["int", a, b]
         # return chute
     
@@ -177,7 +176,7 @@ def player(number_guesses, rule_guesses):
         if len(NUMEROS_CORRETOS) == 3:
             print(f'{len(NUMEROS_CORRETOS)} CHUTES NUMERICOS CORRETOS')
             regra = chute_regra(NUMEROS_CORRETOS)
-            return [CHUTE_DE_REGRA]
+            return [CHUTE_DE_REGRA,regra]
 
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
        
