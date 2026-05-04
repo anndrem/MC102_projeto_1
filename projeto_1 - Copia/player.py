@@ -1,4 +1,3 @@
-import traceback
 ### TODO: PREENCHA SUAS INFORMAÇÕES AQUI ###
 # Nome #01 (quem entregou o código):    André de Almeida Maximiano 
 # RA #01 (quem entregou o código):      306387
@@ -42,6 +41,7 @@ Você pode implementar outras funções para auxiliar a função `player` e salv
 Para mais informações, verifique o README.md ou consulte um monitor.
 """
 
+import traceback
 import random
 
 CHUTE_DE_NUMERO = "NUMBER"
@@ -78,6 +78,7 @@ def buscar_intervalo(proximidade, a=None, b=None):
     return meio 
 
 def chute_numerico(intervalo, acertou):
+    #TODO: sair do intervalo que esta sendo repetido
     global CHAMADAS, MENOR, MAIOR
     anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
     
@@ -144,27 +145,26 @@ def chute_regra(chutes_certos):
                     comuns.append([k,r])       
         #verificando quando se há uma ou múltiplas regras válidas para todo n em chutes_certos
         if len(comuns) == 1:
-            chute = ["mod"] + (comuns[0])
-            return chute    
+            chute = ["mod"] + comuns[0]
+            return chute[0]    
         elif len(comuns) > 1:
             chutes = []
             for i in comuns:
                 chute = ["mod"] + i
                 chutes.append(chute)
-                return chutes
+                return chutes[0]
         return None
     if pot(chutes_certos):
         return pot(chutes_certos)
     elif mod(chutes_certos):
         return mod(chutes_certos)
     else:
+        #TODO: fazer intervalo
         a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
         b = random.randint(a, min(100_000, a + 100))
         chute = ["int", a, b]
     
     return chute
-        # chute = ["int", a, b]
-        # return chute
     
     
 
@@ -177,14 +177,14 @@ def player(number_guesses, rule_guesses):
         global CHAMADAS, MENOR, MAIOR
         CHAMADAS += 1
 
+        CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
+        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
         if len(NUMEROS_CORRETOS) == 3:
             print(f'{len(NUMEROS_CORRETOS)} CHUTES NUMERICOS CORRETOS')
             regra = chute_regra(NUMEROS_CORRETOS)
             return [CHUTE_DE_REGRA, regra]
 
-        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
-        # CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
        
 
         """ CHUTE INICIAL
@@ -192,10 +192,10 @@ def player(number_guesses, rule_guesses):
         if len(CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0]) == 0:
             return [CHUTE_DE_NUMERO, 10]
         
-        numero_correto = number_guesses[-1][0]
+        ultimo_numero = number_guesses[-1][0]
 
-        if number_guesses[-1][2] and numero_correto not in NUMEROS_CORRETOS:
-            NUMEROS_CORRETOS.append(numero_correto)        
+        if number_guesses[-1][2] and ultimo_numero not in NUMEROS_CORRETOS:
+            NUMEROS_CORRETOS.append(ultimo_numero)        
 
         anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
         intervalo = True
@@ -213,14 +213,14 @@ def player(number_guesses, rule_guesses):
             TEM_INTERVALO.append(not intervalo)
             n = chute_numerico(not intervalo, anterior[2])
         
-        # verificando n
         if n <= 0 or n > 100_000:
             print(f'CUIDADO: {n} fora do intervalo!\nRecalculando...')
             n = buscar_intervalo(anterior[1])
-
+            n+=100
+        
         return [CHUTE_DE_NUMERO, n]
         
-    except Exception as e:
+    except Exception:
         print('Erro no código: ')
         traceback.print_exc()
 
