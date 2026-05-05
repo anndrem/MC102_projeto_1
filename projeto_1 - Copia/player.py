@@ -55,7 +55,7 @@ NUMEROS_CORRETOS = []
 
 MENOR = 1
 MAIOR = 10
-CHAMADAS = -1
+CHAMADAS = 0
 
 TRY_INTERVAL = 0
 def buscar_intervalo(proximidade, a=None, b=None):
@@ -161,11 +161,15 @@ def chute_regra(chutes_certos):
         NUMEROS_CORRETOS.sort()
         a = NUMEROS_CORRETOS[0]
         b = NUMEROS_CORRETOS[-1]
+        chute = ["int", a, b]
         
+        if len(CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]) == 0:
+            return chute
+
         acertou = CHUTES_ANTERIORES[CHUTE_DE_REGRA][0][-1][-1]
         while not acertou:
-            b+= TRY_INTERVAL + 1
-        chute = ["int", a, b]
+            chute[2] += TRY_INTERVAL + 1
+
         return chute
         # chute = ["int", a, b]
         # return chute
@@ -185,7 +189,7 @@ def player(number_guesses, rule_guesses):
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
         if len(NUMEROS_CORRETOS) == 3:
-            print(f'{len(NUMEROS_CORRETOS)} CHUTES NUMERICOS CORRETOS')
+            print(f'CHUTANDO REGRA...')
             regra = chute_regra(NUMEROS_CORRETOS)
             return [CHUTE_DE_REGRA, regra]
 
@@ -217,11 +221,15 @@ def player(number_guesses, rule_guesses):
             TEM_INTERVALO.append(not intervalo)
             n = chute_numerico(not intervalo, anterior[2])
         
-        if n <= 0 or n > 100_000:
-            print(f'CUIDADO: {n} fora do intervalo!\nRecalculando...')
+        if n <= 0:
+            print(f'CUIDADO: {n} <= 0\nRecalculando...')
             n = buscar_intervalo(anterior[1])
             n+=100
-        
+        elif n > 100_000:
+            print(f'CUIDADO: {n} > 100_000\nRecalculando...')
+            n = buscar_intervalo(anterior[1])
+            n = 100_000
+
         return [CHUTE_DE_NUMERO, n]
         
     except Exception:
