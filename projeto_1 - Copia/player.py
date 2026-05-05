@@ -78,13 +78,14 @@ def buscar_intervalo(proximidade, a=None, b=None):
     return meio 
 
 def chute_numerico(intervalo, acertou):
+    #TODO: sair do intervalo que esta sendo repetido
     global CHAMADAS, MENOR, MAIOR
     anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
     
     ultimo_numero = anterior[0]
     proximidade = anterior[1]
     if acertou:
-        print(f'ULTIMO NUMERO ESTÁ CORRETO: {ultimo_numero}')
+        print(f'ULTIMO NUMERO ESTÁ CORRETO: {ultimo_numero}\nSAINDO DO INTERVALO: [{MENOR},{MAIOR}]')
         return ultimo_numero + 1000
     
     if intervalo:
@@ -171,16 +172,17 @@ def player(number_guesses, rule_guesses):
     """Função principal do jogador.     
     """
     try:
-        global CHAMADAS, MENOR, MAIOR , CHUTES_REGRA
+        global CHAMADAS, MENOR, MAIOR , CHUTES_REGRA, NUMEROS_CORRETOS
         CHAMADAS += 1
 
+        CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
+        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
         if len(NUMEROS_CORRETOS) == 3:
-            print(f'{len(NUMEROS_CORRETOS)} CHUTES NUMERICOS CORRETOS')
+            print(f'CHUTANDO REGRA...')
             regra = chute_regra(NUMEROS_CORRETOS)
-            return [CHUTE_DE_REGRA,regra]
+            return [CHUTE_DE_REGRA, regra]
 
-        CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
        
 
         """ CHUTE INICIAL
@@ -188,10 +190,10 @@ def player(number_guesses, rule_guesses):
         if len(CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0]) == 0:
             return [CHUTE_DE_NUMERO, 10]
         
-        numero_correto = number_guesses[-1][0]
+        ultimo_numero = number_guesses[-1][0]
 
-        if number_guesses[-1][2] and numero_correto not in NUMEROS_CORRETOS:
-            NUMEROS_CORRETOS.append(numero_correto)        
+        if number_guesses[-1][2] and ultimo_numero not in NUMEROS_CORRETOS:
+            NUMEROS_CORRETOS.append(ultimo_numero)        
 
         anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
         intervalo = True
@@ -209,13 +211,18 @@ def player(number_guesses, rule_guesses):
             TEM_INTERVALO.append(not intervalo)
             n = chute_numerico(not intervalo, anterior[2])
         
-        # verificando n
-        if n < 0 and n > 100_000:
+        if n <= 0:
+            print(f'CUIDADO: {n} <= 0\nRecalculando...')
             n = buscar_intervalo(anterior[1])
+            n+=100
+        elif n > 100_000:
+            print(f'CUIDADO: {n} > 100_000\nRecalculando...')
+            n = buscar_intervalo(anterior[1])
+            n = 100_000
 
         return [CHUTE_DE_NUMERO, n]
         
-    except Exception as e:
+    except Exception:
         print('Erro no código: ')
         traceback.print_exc()
 
