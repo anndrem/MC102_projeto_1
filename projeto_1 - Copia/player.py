@@ -55,8 +55,9 @@ NUMEROS_CORRETOS = []
 
 MENOR = 1
 MAIOR = 10
-CHAMADAS = 0
+CHAMADAS = -1
 
+TRY_INTERVAL = 0
 def buscar_intervalo(proximidade, a=None, b=None):
     global MENOR, MAIOR
     if a is not None and b is not None:
@@ -96,7 +97,7 @@ def chute_numerico(intervalo, acertou):
         return ultimo_numero * 2
     
 def chute_regra(chutes_certos):
-    
+    global TRY_INTERVAL
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
         valores = []
@@ -160,8 +161,13 @@ def chute_regra(chutes_certos):
         return mod(chutes_certos)
     else:
         #TODO: fazer intervalo
-        a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
-        b = random.randint(a, min(100_000, a + 100))
+        NUMEROS_CORRETOS.sort()
+        a = NUMEROS_CORRETOS[0]
+        b = NUMEROS_CORRETOS[-1]
+        
+        acertou = CHUTES_ANTERIORES[CHUTE_DE_REGRA][0][-1][-1]
+        while not acertou:
+            b+= TRY_INTERVAL + 1
         chute = ["int", a, b]
     
     return chute
