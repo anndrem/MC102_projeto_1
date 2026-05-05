@@ -146,13 +146,13 @@ def chute_regra(chutes_certos):
         #verificando quando se há uma ou múltiplas regras válidas para todo n em chutes_certos
         if len(comuns) == 1:
             chute = ["mod"] + comuns[0]
-            return chute[0]    
+            return chute    
         elif len(comuns) > 1:
             chutes = []
             for i in comuns:
                 chute = ["mod"] + i
                 chutes.append(chute)
-                return chutes[0]
+                return chutes
         return None
     if pot(chutes_certos):
         return pot(chutes_certos)
