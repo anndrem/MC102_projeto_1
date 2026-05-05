@@ -52,7 +52,7 @@ CHUTES_ANTERIORES[CHUTE_DE_NUMERO] = []
 CHUTES_ANTERIORES[CHUTE_DE_REGRA] = []
 TEM_INTERVALO = []
 NUMEROS_CORRETOS = []
-
+CHUTES_REGRA = []
 MENOR = 1
 MAIOR = 10
 CHAMADAS = 0
@@ -96,9 +96,10 @@ def chute_numerico(intervalo, acertou):
     
 def chute_regra(chutes_certos):
     """retorna um chute de regra com base na lista de chutes de numeros corretos"""
+    global CHUTES_REGRA
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
-        valores = [] # armazena valores de p que satisfazem a
+        valores = [] # armazena valores de p que satisfazem a regra
         for n in chutes_certos:
             #verifica valores de p que satisfazem a regra para cada n na lista
             for p in range(2,11):
@@ -121,7 +122,6 @@ def chute_regra(chutes_certos):
                     chute.append(lista)       
                 return chute
         return None    
-    
     def mod(chutes_certos):
         """verifica valores de k e r que satisfazem a regra para todos os chutes e os retornam, caso exitam """
         valores = [] #valores de [k,r] válidos para cada n em chutes_certos
@@ -145,21 +145,23 @@ def chute_regra(chutes_certos):
                 chute.append(lista)
             return chute   
         return None   
-        
-    if pot(chutes_certos):
-        chute = random.choice(pot(chutes_certos))
-        return chute
+    regra_pot = pot(chutes_certos)
+    regra_mod = mod(chutes_certos)
     
-    elif mod(chutes_certos):
-        chute = random.choice(mod(chutes_certos))
-        return chute
-    else:
-        a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
-        b = random.randint(a, min(100_000, a + 100))
-        chute = ["int", a, b]
-        return chute
-        # chute = ["int", a, b]
-        # return chute
+    if regra_pot:
+        for i in regra_pot:
+            CHUTES_REGRA.append(i)
+    
+    if regra_mod:
+        for j in regra_mod:
+            CHUTES_REGRA.append(j)
+    a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
+    b = random.randint(a, min(100_000, a + 100))
+    chute = ["int", a, b]
+    CHUTES_REGRA.append(chute)
+
+    regra = CHUTES_REGRA.pop(0)   
+    return regra
     
     
 
@@ -169,7 +171,7 @@ def player(number_guesses, rule_guesses):
     """Função principal do jogador.     
     """
     try:
-        global CHAMADAS, MENOR, MAIOR
+        global CHAMADAS, MENOR, MAIOR , CHUTES_REGRA
         CHAMADAS += 1
 
 
