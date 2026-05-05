@@ -98,9 +98,10 @@ def chute_numerico(intervalo, acertou):
     
 def chute_regra(chutes_certos):
     global TRY_INTERVAL
+    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
-        valores = []
+        valores = [] # armazena valores de p que satisfazem a
         for n in chutes_certos:
             #verifica valores de p que satisfazem a regra para cada n na lista
             for p in range(2,11):
@@ -116,16 +117,12 @@ def chute_regra(chutes_certos):
             else: # quando é encontrado um valor de p que vale para todo n na lista,ou seja, quando o loop nao quebra
                 if p not in comuns:
                     comuns.append(p)
-        if len(comuns) == 1: #quando é encontrada uma unica regra possivel para n,ou seja, a regra do jogo
-                comuns.append(0)
-                chute = ["pot"] + comuns  
+        if len(comuns) != 0:
+                chute = []
+                for p in comuns:
+                    lista = ["pot",p,0]
+                    chute.append(lista)       
                 return chute
-        elif len(comuns) > 1:  #para o caso de existirem mais de uma regra possivel para n
-            chute = []
-            for p in comuns:
-                lista = ["pot",p,0]
-                chute.append(lista)
-            return chute
         return None    
     
     def mod(chutes_certos):
@@ -144,21 +141,21 @@ def chute_regra(chutes_certos):
             else: #quando o loop não quebrar, ou seja, houver [k,r] valido para todo n
                 if [k,r] not in comuns:
                     comuns.append([k,r])       
-        #verificando quando se há uma ou múltiplas regras válidas para todo n em chutes_certos
-        if len(comuns) == 1:
-            chute = ["mod"] + comuns[0]
-            return chute    
-        elif len(comuns) > 1:
-            chutes = []
-            for i in comuns:
-                chute = ["mod"] + i
-                chutes.append(chute)
-                return chutes
-        return None
+        if len(comuns) != 0:
+            chute = []
+            for [k,r] in comuns:
+                lista = ["mod"] + [k,r]
+                chute.append(lista)
+            return chute   
+        return None   
+        
     if pot(chutes_certos):
-        return pot(chutes_certos)
+        chute = random.choice(pot(chutes_certos))
+        return chute
+    
     elif mod(chutes_certos):
-        return mod(chutes_certos)
+        chute = random.choice(mod(chutes_certos))
+        return chute
     else:
         #TODO: fazer intervalo
         NUMEROS_CORRETOS.sort()
@@ -169,8 +166,9 @@ def chute_regra(chutes_certos):
         while not acertou:
             b+= TRY_INTERVAL + 1
         chute = ["int", a, b]
-    
-    return chute
+        return chute
+        # chute = ["int", a, b]
+        # return chute
     
     
 
