@@ -52,7 +52,7 @@ CHUTES_ANTERIORES[CHUTE_DE_NUMERO] = []
 CHUTES_ANTERIORES[CHUTE_DE_REGRA] = []
 TEM_INTERVALO = []
 NUMEROS_CORRETOS = []
-CHUTES_REGRA = []
+
 MENOR = 1
 MAIOR = 10
 CHAMADAS = 0
@@ -96,6 +96,7 @@ def chute_numerico(intervalo, acertou):
         return ultimo_numero * 2
     
 def chute_regra(chutes_certos):
+    global TRY_INTERVAL
     """retorna um chute de regra com base na lista de chutes de numeros corretos"""
     global CHUTES_REGRA
     def pot(chutes_certos):
@@ -146,23 +147,29 @@ def chute_regra(chutes_certos):
                 chute.append(lista)
             return chute   
         return None   
-    regra_pot = pot(chutes_certos)
-    regra_mod = mod(chutes_certos)
+    if pot(chutes_certos):
+        chute = random.choice(mod(chutes_certos))
     
-    if regra_pot:
-        for i in regra_pot:
-            CHUTES_REGRA.append(i)
-    
-    if regra_mod:
-        for j in regra_mod:
-            CHUTES_REGRA.append(j)
-    a = random.randint(1, 100_000) # Dica: o underline (_) pode ser usado para melhorar a legibilidade de números grandes em Python!
-    b = random.randint(a, min(100_000, a + 100))
-    chute = ["int", a, b]
-    CHUTES_REGRA.append(chute)
+    elif mod(chutes_certos):
+        chute = random.choice(mod(chutes_certos))
+        return chute
+    else:
+        #TODO: fazer intervalo
+        NUMEROS_CORRETOS.sort()
+        a = NUMEROS_CORRETOS[0]
+        b = NUMEROS_CORRETOS[-1]
+        chute = ["int", a, b]
+        
+        if len(CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]) == 0:
+            return chute
 
-    regra = CHUTES_REGRA.pop(0)   
-    return regra
+        acertou = CHUTES_ANTERIORES[CHUTE_DE_REGRA][0][-1][-1]
+        while not acertou:
+            chute[2] += TRY_INTERVAL + 1
+
+        return chute
+        # chute = ["int", a, b]
+        # return chute
     
     
 
@@ -172,7 +179,7 @@ def player(number_guesses, rule_guesses):
     """Função principal do jogador.     
     """
     try:
-        global CHAMADAS, MENOR, MAIOR , CHUTES_REGRA, NUMEROS_CORRETOS
+        global CHAMADAS, MENOR, MAIOR , NUMEROS_CORRETOS
         CHAMADAS += 1
 
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
