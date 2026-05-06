@@ -42,7 +42,6 @@ Para mais informações, verifique o README.md ou consulte um monitor.
 """
 
 import traceback
-import random
 
 CHUTE_DE_NUMERO = "NUMBER"
 CHUTE_DE_REGRA = "RULE"
@@ -96,24 +95,23 @@ def chute_numerico(intervalo):
         return ultimo_numero * 2
     
 def chute_regra(chutes_certos):
-    global TRY_INTERVAL
     """retorna um chute de regra com base na lista de chutes de numeros corretos"""
+    global TRY_INTERVAL
     def pot(chutes_certos):
-        """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
-        valores = [] # armazena valores de p que satisfazem a regra
+        """verifica regras do tipo pot válidas para os chutes e as retornam, caso existam"""
+        valores = [] 
         for n in chutes_certos:
-            #verifica valores de p que satisfazem a regra para cada n na lista
             for p in range(2,11):
                 k = round(n**(1/p))
                 if k**p == n:
                     valores.append(p)
-        comuns = []   #valores de p comuns para todo n na lista
+        comuns = []   
         for p in valores:
             for n in chutes_certos:
                 k = round(n**(1/p))
-                if k**p != n:    #quando é encontrado um valor de n que não se aplica para a regra, o loop é quebrado
+                if k**p != n:   
                     break
-            else: # quando é encontrado um valor de p que vale para todo n na lista,ou seja, quando o loop nao quebra
+            else: 
                 if p not in comuns:
                     comuns.append(p)
         if len(comuns) != 0:
@@ -124,33 +122,33 @@ def chute_regra(chutes_certos):
                 return chute
         return None    
     def mod(chutes_certos):
-        """verifica valores de k e r que satisfazem a regra para todos os chutes e os retornam, caso exitam """
-        valores = [] #valores de [k,r] válidos para cada n em chutes_certos
+        """verifica regras de mod válidas para os chutes de número e as retornam, caso exitam """
+        valores = [] 
         for n in chutes_certos:
             for k in range(2,101):
                 for r in range(0,k):
                     if n%k == r:
                         valores.append([k,r])
-        comuns = [] # [k,r] comuns para todo n em chutees_certos
-        for [k,r] in valores:
+        comuns = [] 
+        for k,r in valores:
             for n in chutes_certos:
                 if n%k != r:
                     break
-            else: #quando o loop não quebrar, ou seja, houver [k,r] valido para todo n
+            else: 
                 if [k,r] not in comuns:
                     comuns.append([k,r])       
         if len(comuns) != 0:
             chute = []
-            for [k,r] in comuns:
-                lista = ["mod"] + [k,r]
+            for k,r in comuns:
+                lista = ["mod",k,r]
                 chute.append(lista)
             return chute   
         return None   
     
+    #evitar repetições de chute
     if pot(chutes_certos):
         for chute in pot(chutes_certos):
             if chute not in CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]:
-                print(chute)
                 return chute
         
     if mod(chutes_certos):   
