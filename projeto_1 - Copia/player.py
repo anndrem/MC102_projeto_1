@@ -1,4 +1,3 @@
-import traceback
 ### TODO: PREENCHA SUAS INFORMAÇÕES AQUI ###
 # Nome #01 (quem entregou o código):    André de Almeida Maximiano 
 # RA #01 (quem entregou o código):      306387
@@ -42,6 +41,7 @@ Você pode implementar outras funções para auxiliar a função `player` e salv
 Para mais informações, verifique o README.md ou consulte um monitor.
 """
 
+import traceback
 import random
 
 CHUTE_DE_NUMERO = "NUMBER"
@@ -57,6 +57,7 @@ MENOR = 1
 MAIOR = 10
 CHAMADAS = 0
 
+TRY_INTERVAL = 0
 def buscar_intervalo(proximidade, a=None, b=None):
     global MENOR, MAIOR
     if a is not None and b is not None:
@@ -147,29 +148,20 @@ def chute_regra(chutes_certos):
                 chute.append(lista)
             return chute   
         return None   
-    if pot(chutes_certos):
-        chute = random.choice(mod(chutes_certos))
     
-    elif mod(chutes_certos):
+    if pot(chutes_certos):
+        chute = random.choice(pot(chutes_certos))
+        return chute
+    elif mod(chutes_certos):   
         chute = random.choice(mod(chutes_certos))
         return chute
-    else:
-        #TODO: fazer intervalo
+    else: #TODO: fazer intervalo
         NUMEROS_CORRETOS.sort()
         a = NUMEROS_CORRETOS[0]
         b = NUMEROS_CORRETOS[-1]
         chute = ["int", a, b]
-        
-        if len(CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]) == 0:
-            return chute
-
-        acertou = CHUTES_ANTERIORES[CHUTE_DE_REGRA][0][-1][-1]
-        while not acertou:
-            chute[2] += TRY_INTERVAL + 1
-
         return chute
-        # chute = ["int", a, b]
-        # return chute
+        
     
     
 
