@@ -175,7 +175,7 @@ def player(number_guesses, rule_guesses):
     """Função principal do jogador.     
     """
     try:
-        global PRESO_NO_INTERVALO, CHAMADAS, MENOR, MAIOR
+        global PRESO_NO_INTERVALO, CHAMADAS, MENOR, MAIOR, NUMEROS_CORRETOS
         CHAMADAS += 1
 
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
@@ -187,6 +187,9 @@ def player(number_guesses, rule_guesses):
         if len(NUMEROS_CORRETOS) == 3:
             print(f'CHUTANDO REGRA...')
             regra = chute_regra(NUMEROS_CORRETOS)
+            if CHAMADAS % 100 == 0:
+                NUMEROS_CORRETOS = NUMEROS_CORRETOS[:1]
+                MENOR = NUMEROS_CORRETOS[0] // 2
             return [CHUTE_DE_REGRA, regra]
 
        
@@ -211,7 +214,9 @@ def player(number_guesses, rule_guesses):
         if PRESO_NO_INTERVALO == 2:
             PRESO_NO_INTERVALO = 0
             MAIOR = 100_000
+            MENOR = NUMEROS_CORRETOS[-1]
             n = buscar_intervalo('menor')
+            print(f'PRESO NO INTERVALO: ', n)
             return [CHUTE_DE_NUMERO, n]
 
         anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
