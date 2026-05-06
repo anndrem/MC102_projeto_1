@@ -98,7 +98,6 @@ def chute_numerico(intervalo):
 def chute_regra(chutes_certos):
     global TRY_INTERVAL
     """retorna um chute de regra com base na lista de chutes de numeros corretos"""
-    global CHUTES_REGRA
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
         valores = [] # armazena valores de p que satisfazem a regra
@@ -149,25 +148,30 @@ def chute_regra(chutes_certos):
         return None   
     
     if pot(chutes_certos):
-        chute = random.choice(pot(chutes_certos))
-        return chute
-    elif mod(chutes_certos):   
-        chute = random.choice(mod(chutes_certos))
-        return chute
-    else:
-        #TODO: fazer intervalo
-        NUMEROS_CORRETOS.sort()
-        a = NUMEROS_CORRETOS[0]
-        b = NUMEROS_CORRETOS[-1]
-        chute = ["int", a, b]
+        for chute in pot(chutes_certos):
+            if chute not in CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]:
+                print(chute)
+                return chute
         
-        if len(CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]) == 0:
-            return chute
+    if mod(chutes_certos):   
+        for chute in mod(chutes_certos):
+            if chute not in CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]:
+                return chute
 
-        TRY_INTERVAL+=1
-        chute[2] += TRY_INTERVAL
+   
+    #TODO: fazer intervalo
+    NUMEROS_CORRETOS.sort()
+    a = NUMEROS_CORRETOS[0]
+    b = NUMEROS_CORRETOS[-1]
+    chute = ["int", a, b]
+    
+    if len(CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]) == 0:
+        return chute
 
-        return chute    
+    TRY_INTERVAL+=1
+    chute[2] += TRY_INTERVAL
+
+    return chute    
         
 def player(number_guesses, rule_guesses):
 
