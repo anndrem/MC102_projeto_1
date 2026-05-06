@@ -71,8 +71,10 @@ def buscar_intervalo(proximidade):
         MENOR=MAIOR
         MAIOR+=1000
     elif MENOR == MAIOR:
+        print('igualou')
         MENOR=MAIOR
         MENOR-=1000
+        print(MENOR, MAIOR, proximidade, (MENOR + MAIOR) // 2)
     
     if proximidade == 'maior':
         MENOR = meio + 1
@@ -189,19 +191,31 @@ def player(number_guesses, rule_guesses):
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
         """
+
         CHUTE DE REGRA
         """
         if CHAMADAS_REGRA == 1:
             NUMEROS_CORRETOS.sort()
             N_CORRETOS_COPY = NUMEROS_CORRETOS.copy()
-
+        
+        if len(NUMEROS_CORRETOS) == 3 and CHAMADAS_REGRA > 0 and CHAMADAS_REGRA % 30 == 0:
+            if number_guesses[-1][1] == 'maior':
+                NUMEROS_CORRETOS[0] = number_guesses[-1][0] + 1
+                regra = chute_regra(NUMEROS_CORRETOS)
+                return [CHUTE_DE_REGRA, regra]
+            
+            TRY_INTERVAL_END=0
+            TRY_INTERVAL_START+=1
+            NUMEROS_CORRETOS[0] = N_CORRETOS_COPY[0] - TRY_INTERVAL_START
+            NUMEROS_CORRETOS[-1] = N_CORRETOS_COPY[-1]
+            n = NUMEROS_CORRETOS[0]
+            return [CHUTE_DE_NUMERO, n]
+        
         if len(NUMEROS_CORRETOS) == 3:
             print(f'CHUTANDO REGRA...')
             regra = chute_regra(NUMEROS_CORRETOS)
             if CHAMADAS_REGRA % 30 == 0:
                 TRY_INTERVAL_END=0
-                TRY_INTERVAL_START+=1
-                NUMEROS_CORRETOS[0] = N_CORRETOS_COPY[0] - TRY_INTERVAL_START
                 NUMEROS_CORRETOS[-1] = N_CORRETOS_COPY[-1]
             return [CHUTE_DE_REGRA, regra]
 
@@ -228,7 +242,7 @@ def player(number_guesses, rule_guesses):
             MAIOR = 100_000
             MENOR = 0
             # n = (MAIOR + MENOR) // 2
-            n = buscar_intervalo(number_guesses[1])
+            n = buscar_intervalo(number_guesses[-1][1])
             print(f'PRESO NO INTERVALO: ', ultimo_numero)
             return [CHUTE_DE_NUMERO, n]
 
