@@ -214,7 +214,7 @@ def player(number_guesses, rule_guesses):
         if PRESO_NO_INTERVALO == 2:
             PRESO_NO_INTERVALO = 0
             MAIOR = 100_000
-            MENOR = NUMEROS_CORRETOS[-1]
+            MENOR = 0
             n = buscar_intervalo('menor')
             print(f'PRESO NO INTERVALO: ', n)
             return [CHUTE_DE_NUMERO, n]
