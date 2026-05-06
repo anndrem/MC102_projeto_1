@@ -33,7 +33,7 @@ def play_one_game(max_attempts):
             n = guess[1]
             d = direction(n, numbers)
             hit = n in numbers
-            number_guesses.append([n, d, hit])
+            number_guesses.append([n, "igual" if hit else d, hit])
             continue
 
         rule_type, p1, p2 = guess[1]

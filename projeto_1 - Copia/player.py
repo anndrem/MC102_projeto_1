@@ -188,8 +188,9 @@ def player(number_guesses, rule_guesses):
             print(f'CHUTANDO REGRA...')
             regra = chute_regra(NUMEROS_CORRETOS)
             if CHAMADAS % 100 == 0:
-                NUMEROS_CORRETOS = NUMEROS_CORRETOS[:1]
                 MENOR = NUMEROS_CORRETOS[0] // 2
+                MAIOR = NUMEROS_CORRETOS[0]
+                NUMEROS_CORRETOS = NUMEROS_CORRETOS[1:]
             return [CHUTE_DE_REGRA, regra]
 
        
