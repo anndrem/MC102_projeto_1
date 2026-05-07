@@ -55,7 +55,7 @@ TEM_INTERVALO = []
 NUMEROS_CORRETOS = []
 N_CORRETOS_COPY = []
 CHAMADAS_REGRA = 0
-PRESO_NO_INTERVALO = 0
+PRESO_NO_INTERVALO = 1
 MENOR = 1
 MAIOR = 10
 
@@ -65,16 +65,14 @@ def buscar_intervalo(proximidade):
     global MENOR, MAIOR
 
     meio = (MENOR + MAIOR)//2
-    if MENOR > MAIOR:
+    if MENOR >= MAIOR:
         # raise Exception('intervalo invalido')
         # TODO: tratar erro
         MENOR=MAIOR
         MAIOR+=1000
     elif MENOR == MAIOR:
-        print('igualou')
         MENOR=MAIOR
         MENOR-=1000
-        print(MENOR, MAIOR, proximidade, (MENOR + MAIOR) // 2)
     
     if proximidade == 'maior':
         MENOR = meio + 1
@@ -198,7 +196,7 @@ def player(number_guesses, rule_guesses):
             NUMEROS_CORRETOS.sort()
             N_CORRETOS_COPY = NUMEROS_CORRETOS.copy()
         
-        if len(NUMEROS_CORRETOS) == 3 and CHAMADAS_REGRA > 0 and CHAMADAS_REGRA % 30 == 0:
+        if len(NUMEROS_CORRETOS) == 3 and CHAMADAS_REGRA > 0 and CHAMADAS_REGRA % 50 == 0:
             if number_guesses[-1][1] == 'maior':
                 NUMEROS_CORRETOS[0] = number_guesses[-1][0] + 1
                 regra = chute_regra(NUMEROS_CORRETOS)
@@ -214,7 +212,7 @@ def player(number_guesses, rule_guesses):
         if len(NUMEROS_CORRETOS) == 3:
             print(f'CHUTANDO REGRA...')
             regra = chute_regra(NUMEROS_CORRETOS)
-            if CHAMADAS_REGRA % 30 == 0:
+            if CHAMADAS_REGRA % 50 == 0:
                 TRY_INTERVAL_END=0
                 NUMEROS_CORRETOS[-1] = N_CORRETOS_COPY[-1]
             return [CHUTE_DE_REGRA, regra]
@@ -229,21 +227,22 @@ def player(number_guesses, rule_guesses):
         ultimo_numero = number_guesses[-1][0]
 
         if number_guesses[-1][2] and ultimo_numero not in NUMEROS_CORRETOS:
-            PRESO_NO_INTERVALO = 0
+            PRESO_NO_INTERVALO = 1
             NUMEROS_CORRETOS.append(ultimo_numero)
         """
         FORCANDO A SAIDA DO INTERVALO
         """            
         if ultimo_numero in NUMEROS_CORRETOS:
-            PRESO_NO_INTERVALO+=1
+            PRESO_NO_INTERVALO*=1.5
 
-        if PRESO_NO_INTERVALO == 2:
-            PRESO_NO_INTERVALO = 0
-            MAIOR = 100_000
-            MENOR = 0
-            # n = (MAIOR + MENOR) // 2
+        if PRESO_NO_INTERVALO > 3 and number_guesses[-1][1] == 'maior':
+            PRESO_NO_INTERVALO*=1.5
+            PRESO_NO_INTERVALO = int(PRESO_NO_INTERVALO)
+            MAIOR += PRESO_NO_INTERVALO
+            MENOR -= PRESO_NO_INTERVALO
+            # MAIOR -= PRESO_NO_INTERVALO
             n = buscar_intervalo(number_guesses[-1][1])
-            print(f'PRESO NO INTERVALO: ', ultimo_numero)
+            print(f'PRESO NO INTERVALO: ', PRESO_NO_INTERVALO, ultimo_numero)
             return [CHUTE_DE_NUMERO, n]
 
         anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
@@ -269,7 +268,7 @@ def player(number_guesses, rule_guesses):
         elif n > 100_000:
             print(f'CUIDADO: {n} > 100_000\nRecalculando...')
             MAIOR = 100_000
-            MENOR = ultimo_numero
+            MENOR = 0
             n = buscar_intervalo(anterior[1])
 
         # if n < 1 or n > 100_000:
@@ -279,7 +278,6 @@ def player(number_guesses, rule_guesses):
         #     print(f'CUIDADO: {n}\nRecalculando...')
 
         #     n = (MAIOR + MENOR) // 2
-
         return [CHUTE_DE_NUMERO, n]
         
     except Exception:
