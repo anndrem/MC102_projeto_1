@@ -88,7 +88,6 @@ def chute_numerico(is_first):
         MAIOR += int(PRESO_NO_INTERVALO)
 
     if acertou and ultimo_numero not in NUMEROS_CORRETOS:
-        print(f'NUMERO CORRETO: {ultimo_numero}')
         PRESO_NO_INTERVALO = 1
         NUMEROS_CORRETOS.append(ultimo_numero)
         return ultimo_numero+1000
@@ -221,7 +220,6 @@ def player(number_guesses, rule_guesses):
 
         """CHUTE DE REGRA"""
         if len(NUMEROS_CORRETOS) == 3 or CHAMADAS > 25:
-            print(f'CHUTANDO REGRA...')
             CHAMADAS_REGRA+=1
             CHAMADAS = 25
             regra = chute_regra(NUMEROS_CORRETOS)
@@ -233,11 +231,9 @@ def player(number_guesses, rule_guesses):
         n = chute_numerico(is_first)
 
         if n <= 0:
-            print(f'CUIDADO: {n} <= 0\nRecalculando...')
             MAIOR = ultimo_numero[-1][0]            
             n = buscar_intervalo()
         elif n > 100_000:
-            print(f'CUIDADO: {n} > 100_000\nRecalculando...')
             MAIOR = 100_000
             MENOR = 0
             n = buscar_intervalo()
