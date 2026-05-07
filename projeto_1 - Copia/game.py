@@ -106,6 +106,7 @@ def generate_numbers(rule):
 
 def direction(guess, numbers):
     """Retorna a direção do número mais próximo na lista de números que satisfazem a regra em relação ao número chutado."""
+   
     i = bisect_left(numbers, guess)
     if i == 0:
         return "maior"
