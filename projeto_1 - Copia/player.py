@@ -42,7 +42,6 @@ Para mais informações, verifique o README.md ou consulte um monitor.
 """
 
 import traceback
-import random
 
 CHUTE_DE_NUMERO = "NUMBER"
 CHUTE_DE_REGRA = "RULE"
@@ -51,60 +50,77 @@ CHUTES_ANTERIORES = {}
 CHUTES_ANTERIORES[CHUTE_DE_NUMERO] = []
 CHUTES_ANTERIORES[CHUTE_DE_REGRA] = []
 
-TEM_INTERVALO = []
 NUMEROS_CORRETOS = []
 N_CORRETOS_COPY = []
+
 CHAMADAS_REGRA = 0
+CHAMADAS = 0
+
 PRESO_NO_INTERVALO = 1
 MENOR = 1
-MAIOR = 10
+MAIOR = 100_000
 
 TRY_INTERVAL_END = 0
 TRY_INTERVAL_START = 0
-def buscar_intervalo(proximidade):
+INTERVAL_SUBINDO = True
+def buscar_intervalo():
     global MENOR, MAIOR
-
-    meio = (MENOR + MAIOR)//2
     if MENOR >= MAIOR:
-        # raise Exception('intervalo invalido')
-        # TODO: tratar erro
         MENOR=MAIOR
         MAIOR+=1000
-    elif MENOR == MAIOR:
-        MENOR=MAIOR
-        MENOR-=1000
-    
-    if proximidade == 'maior':
-        MENOR = meio + 1
-    if proximidade == 'menor':
-        MAIOR = meio - 1
-    
+
     meio = (MENOR + MAIOR) // 2
     return meio 
 
-def chute_numerico(intervalo):
-    #TODO: sair do intervalo que esta sendo repetido
-    global CHAMADAS, MENOR, MAIOR
+def chute_numerico(is_first):
+    global MENOR, MAIOR, PRESO_NO_INTERVALO
 
+    if is_first: return 50_000
+    
     anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
     ultimo_numero = anterior[0]
     proximidade = anterior[1]
     acertou = anterior[2]
 
-    if acertou:
-        print(f'ULTIMO NUMERO ESTÁ CORRETO: {ultimo_numero}\nSAINDO DO INTERVALO: [{MENOR},{MAIOR}]')
-        return ultimo_numero + 1000
-    
-    if intervalo:
+    """
+    FORCANDO A SAIDA DO INTERVALO
+    """           
+    if PRESO_NO_INTERVALO > 2 and acertou:
+        PRESO_NO_INTERVALO*=1.5
+        MAIOR += int(PRESO_NO_INTERVALO)
+
+    if acertou and ultimo_numero not in NUMEROS_CORRETOS:
+        print(f'NUMERO CORRETO: {ultimo_numero}')
+        PRESO_NO_INTERVALO = 1
+        NUMEROS_CORRETOS.append(ultimo_numero)
+        return ultimo_numero+1000
+
+    if ultimo_numero in NUMEROS_CORRETOS:
+        PRESO_NO_INTERVALO*=1.5
+
+    if proximidade == 'menor':
         MAIOR = ultimo_numero
-        return buscar_intervalo(proximidade)
-    elif not intervalo:    
+    else:    
         MENOR = ultimo_numero
-        return ultimo_numero * 2
+
+    return buscar_intervalo()
     
+def interval(subindo):
+    global TRY_INTERVAL_END, TRY_INTERVAL_START, N_CORRETOS_COPY
+
+    if subindo:
+        TRY_INTERVAL_END+=1
+        extremo = N_CORRETOS_COPY[-1] + TRY_INTERVAL_END
+    else:
+        TRY_INTERVAL_START-=1
+        extremo = N_CORRETOS_COPY[0] + TRY_INTERVAL_START
+    return extremo
+
+
 def chute_regra(chutes_certos):
     global TRY_INTERVAL_END, CHAMADAS_REGRA
-    CHAMADAS_REGRA+=1
+    # CHAMADAS_REGRA+=1
+
     """retorna um chute de regra com base na lista de chutes de numeros corretos"""
     def pot(chutes_certos):
         """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
@@ -167,15 +183,11 @@ def chute_regra(chutes_certos):
                 return chute
     
     #TODO: fazer intervalo
-    a = NUMEROS_CORRETOS[0]
-    b = NUMEROS_CORRETOS[-1]
-    chute = ["int", a, b]
-    
-    if len(CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]) == 0:
-        return chute
+    NUMEROS_CORRETOS.sort()
+    a = chutes_certos[0]
+    b = chutes_certos[-1]
 
-    TRY_INTERVAL_END+=1
-    chute[2] += TRY_INTERVAL_END
+    chute = ["int", a, b]
     return chute    
         
 def player(number_guesses, rule_guesses):
@@ -183,101 +195,64 @@ def player(number_guesses, rule_guesses):
     """Função principal do jogador.     
     """
     try:
-        global PRESO_NO_INTERVALO, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END
-
+        global CHAMADAS, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END, INTERVAL_SUBINDO
+        CHAMADAS+=1
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
         """
-
         CHUTE DE REGRA
         """
         if CHAMADAS_REGRA == 1:
             NUMEROS_CORRETOS.sort()
             N_CORRETOS_COPY = NUMEROS_CORRETOS.copy()
         
-        if len(NUMEROS_CORRETOS) == 3 and CHAMADAS_REGRA > 0 and CHAMADAS_REGRA % 50 == 0:
-            if number_guesses[-1][1] == 'maior':
-                NUMEROS_CORRETOS[0] = number_guesses[-1][0] + 1
+        regra = CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]
+
+        if CHAMADAS_REGRA > 1 and regra[-1][0] == 'int':
+            CHAMADAS+=1
+            ultimo_numero = number_guesses[-1][0]
+            proximidade = number_guesses[-1][1]
+            acertou = number_guesses[-1][2]
+
+            if CHAMADAS == 56: return [CHUTE_DE_NUMERO, interval(False)]
+
+            if acertou and ultimo_numero not in NUMEROS_CORRETOS: NUMEROS_CORRETOS.append(ultimo_numero)
+
+            if proximidade == 'maior' and CHAMADAS > 58:
+                extremo = interval(True)
+                return [CHUTE_DE_NUMERO, extremo]
+            if proximidade == 'menor' and CHAMADAS > 57:
                 regra = chute_regra(NUMEROS_CORRETOS)
                 return [CHUTE_DE_REGRA, regra]
             
-            TRY_INTERVAL_END=0
-            TRY_INTERVAL_START+=1
-            NUMEROS_CORRETOS[0] = N_CORRETOS_COPY[0] - TRY_INTERVAL_START
-            NUMEROS_CORRETOS[-1] = N_CORRETOS_COPY[-1]
-            n = NUMEROS_CORRETOS[0]
-            return [CHUTE_DE_NUMERO, n]
-        
-        if len(NUMEROS_CORRETOS) == 3:
+            extremo = interval(False)
+            return [CHUTE_DE_NUMERO, extremo]
+
+        if len(NUMEROS_CORRETOS) == 3 or CHAMADAS > 55:
             print(f'CHUTANDO REGRA...')
+            CHAMADAS_REGRA+=1
+            CHAMADAS = 55
             regra = chute_regra(NUMEROS_CORRETOS)
-            if CHAMADAS_REGRA % 50 == 0:
-                TRY_INTERVAL_END=0
-                NUMEROS_CORRETOS[-1] = N_CORRETOS_COPY[-1]
             return [CHUTE_DE_REGRA, regra]
-
-
+        
         """ 
         CHUTE INICIAL
         """
-        if len(CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0]) == 0:
-            return [CHUTE_DE_NUMERO, 10]
-        
-        ultimo_numero = number_guesses[-1][0]
+        is_first = True if CHAMADAS == 1 else False
+        ultimo_numero = 1 if CHAMADAS == 1 else number_guesses
+        n = chute_numerico(is_first)
 
-        if number_guesses[-1][2] and ultimo_numero not in NUMEROS_CORRETOS:
-            PRESO_NO_INTERVALO = 1
-            NUMEROS_CORRETOS.append(ultimo_numero)
-        """
-        FORCANDO A SAIDA DO INTERVALO
-        """            
-        if ultimo_numero in NUMEROS_CORRETOS:
-            PRESO_NO_INTERVALO*=1.5
-
-        if PRESO_NO_INTERVALO > 3 and number_guesses[-1][1] == 'maior':
-            PRESO_NO_INTERVALO*=1.5
-            PRESO_NO_INTERVALO = int(PRESO_NO_INTERVALO)
-            MAIOR += PRESO_NO_INTERVALO
-            MENOR -= PRESO_NO_INTERVALO
-            # MAIOR -= PRESO_NO_INTERVALO
-            n = buscar_intervalo(number_guesses[-1][1])
-            print(f'PRESO NO INTERVALO: ', PRESO_NO_INTERVALO, ultimo_numero)
-            return [CHUTE_DE_NUMERO, n]
-
-        anterior = CHUTES_ANTERIORES[CHUTE_DE_NUMERO][0][-1]
-        intervalo = True
-
-        if anterior[2]:
-            TEM_INTERVALO.append(not intervalo)
-
-        if len(TEM_INTERVALO) > 0 and TEM_INTERVALO[-1]:
-            n = buscar_intervalo(anterior[1])
-
-        elif anterior[1] == 'menor':
-            TEM_INTERVALO.append(intervalo)
-            n = chute_numerico(intervalo)
-        else:
-            TEM_INTERVALO.append(not intervalo)
-            n = chute_numerico(not intervalo)
-        
         if n <= 0:
             print(f'CUIDADO: {n} <= 0\nRecalculando...')
-            MAIOR = ultimo_numero            
-            n = buscar_intervalo(anterior[1])
+            MAIOR = ultimo_numero[-1][0]            
+            n = buscar_intervalo()
         elif n > 100_000:
             print(f'CUIDADO: {n} > 100_000\nRecalculando...')
             MAIOR = 100_000
             MENOR = 0
-            n = buscar_intervalo(anterior[1])
+            n = buscar_intervalo()
 
-        # if n < 1 or n > 100_000:
-        #     MENOR = 0
-        #     MAIOR = 100_000
-
-        #     print(f'CUIDADO: {n}\nRecalculando...')
-
-        #     n = (MAIOR + MENOR) // 2
         return [CHUTE_DE_NUMERO, n]
         
     except Exception:
