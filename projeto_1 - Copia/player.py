@@ -62,7 +62,7 @@ MAIOR = 100_000
 
 TRY_INTERVAL_END = 0
 TRY_INTERVAL_START = 0
-INTERVAL_SUBINDO = True
+
 def buscar_intervalo():
     global MENOR, MAIOR
     if MENOR >= MAIOR:
@@ -82,9 +82,7 @@ def chute_numerico(is_first):
     proximidade = anterior[1]
     acertou = anterior[2]
 
-    """
-    FORCANDO A SAIDA DO INTERVALO
-    """           
+    """FORCANDO A SAIDA DO INTERVALO"""           
     if PRESO_NO_INTERVALO > 2 and acertou:
         PRESO_NO_INTERVALO*=1.5
         MAIOR += int(PRESO_NO_INTERVALO)
@@ -190,14 +188,11 @@ def player(number_guesses, rule_guesses):
     """Função principal do jogador.     
     """
     try:
-        global CHAMADAS, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END, INTERVAL_SUBINDO
+        global CHAMADAS, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END
         CHAMADAS+=1
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
-        """
-        CHUTE DE REGRA
-        """
         if CHAMADAS_REGRA == 1:
             NUMEROS_CORRETOS.sort()
             N_CORRETOS_COPY = NUMEROS_CORRETOS.copy()
@@ -210,30 +205,29 @@ def player(number_guesses, rule_guesses):
             proximidade = number_guesses[-1][1]
             acertou = number_guesses[-1][2]
 
-            if CHAMADAS == 56: return [CHUTE_DE_NUMERO, interval(False)]
+            if CHAMADAS == 26: return [CHUTE_DE_NUMERO, interval(False)]
 
             if acertou and ultimo_numero not in NUMEROS_CORRETOS: NUMEROS_CORRETOS.append(ultimo_numero)
 
-            if proximidade == 'maior' and CHAMADAS > 58:
+            if proximidade == 'maior' and CHAMADAS > 28:
                 extremo = interval(True)
                 return [CHUTE_DE_NUMERO, extremo]
-            if proximidade == 'menor' and CHAMADAS > 57:
+            if proximidade == 'menor' and CHAMADAS > 27:
                 regra = chute_regra(NUMEROS_CORRETOS)
                 return [CHUTE_DE_REGRA, regra]
             
             extremo = interval(False)
             return [CHUTE_DE_NUMERO, extremo]
 
-        if len(NUMEROS_CORRETOS) == 3 or CHAMADAS > 55:
+        """CHUTE DE REGRA"""
+        if len(NUMEROS_CORRETOS) == 3 or CHAMADAS > 25:
             print(f'CHUTANDO REGRA...')
             CHAMADAS_REGRA+=1
-            CHAMADAS = 55
+            CHAMADAS = 25
             regra = chute_regra(NUMEROS_CORRETOS)
             return [CHUTE_DE_REGRA, regra]
-        
-        """ 
-        CHUTE INICIAL
-        """
+
+        """CHUTE NUMERICO"""
         is_first = True if CHAMADAS == 1 else False
         ultimo_numero = 1 if CHAMADAS == 1 else number_guesses
         n = chute_numerico(is_first)
