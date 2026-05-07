@@ -93,12 +93,9 @@ def chute_numerico(intervalo):
     elif not intervalo:    
         MENOR = ultimo_numero
         return ultimo_numero * 2
-    
-def chute_regra(chutes_certos):
-    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
-    global TRY_INTERVAL
-    def pot(chutes_certos):
-        """verifica regras do tipo pot válidas para os chutes e as retornam, caso existam"""
+
+def pot(chutes_certos):
+        """retorna uma lista com as regras de potência comuns aos chutes numericos, caso existam"""
         valores = [] 
         for n in chutes_certos:
             for p in range(2,11):
@@ -120,9 +117,10 @@ def chute_regra(chutes_certos):
                     lista = ["pot",p,0]
                     chute.append(lista)       
                 return chute
-        return None    
-    def mod(chutes_certos):
-        """verifica regras de mod válidas para os chutes de número e as retornam, caso exitam """
+        return None
+
+def mod(chutes_certos):
+        """retorna uma lista com as regras de resto comuns aos chutes numericos, caso existam """
         valores = [] 
         for n in chutes_certos:
             for k in range(2,101):
@@ -143,7 +141,11 @@ def chute_regra(chutes_certos):
                 lista = ["mod",k,r]
                 chute.append(lista)
             return chute   
-        return None   
+        return None
+
+def chute_regra(chutes_certos):
+    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
+    global TRY_INTERVAL
     
     #evitar repetições de chute
     if pot(chutes_certos):
@@ -155,8 +157,7 @@ def chute_regra(chutes_certos):
         for chute in mod(chutes_certos):
             if chute not in CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]:
                 return chute
-
-   
+    
     #TODO: fazer intervalo
     NUMEROS_CORRETOS.sort()
     a = NUMEROS_CORRETOS[0]
@@ -171,7 +172,7 @@ def chute_regra(chutes_certos):
 
     return chute    
         
-def player(number_guesses, rule_guesses):
+def player(number_guesses, rule_guesses):                   
 
     """Função principal do jogador.     
     """
