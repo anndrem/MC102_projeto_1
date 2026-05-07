@@ -102,42 +102,23 @@ def chute_numerico(is_first):
         MAIOR = ultimo_numero
     else:    
         MENOR = ultimo_numero
+        return ultimo_numero * 2
 
-    return buscar_intervalo()
-    
-def interval(subindo):
-    global TRY_INTERVAL_END, TRY_INTERVAL_START, N_CORRETOS_COPY
-
-    if subindo:
-        TRY_INTERVAL_END+=1
-        extremo = N_CORRETOS_COPY[-1] + TRY_INTERVAL_END
-    else:
-        TRY_INTERVAL_START-=1
-        extremo = N_CORRETOS_COPY[0] + TRY_INTERVAL_START
-    return extremo
-
-
-def chute_regra(chutes_certos):
-    global TRY_INTERVAL_END, CHAMADAS_REGRA
-    # CHAMADAS_REGRA+=1
-
-    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
-    def pot(chutes_certos):
-        """verifica valores de p que satisfazem a regra para todos os chutes e os retornam, caso existam"""
-        valores = [] # armazena valores de p que satisfazem a regra
+def pot(chutes_certos):
+        """retorna uma lista com as regras de potência comuns aos chutes numericos, caso existam"""
+        valores = [] 
         for n in chutes_certos:
-            #verifica valores de p que satisfazem a regra para cada n na lista
             for p in range(2,11):
                 k = round(n**(1/p))
                 if k**p == n:
                     valores.append(p)
-        comuns = []   #valores de p comuns para todo n na lista
+        comuns = []   
         for p in valores:
             for n in chutes_certos:
                 k = round(n**(1/p))
-                if k**p != n:    #quando é encontrado um valor de n que não se aplica para a regra, o loop é quebrado
+                if k**p != n:   
                     break
-            else: # quando é encontrado um valor de p que vale para todo n na lista,ou seja, quando o loop nao quebra
+            else: 
                 if p not in comuns:
                     comuns.append(p)
         if len(comuns) != 0:
@@ -146,35 +127,40 @@ def chute_regra(chutes_certos):
                     lista = ["pot",p,0]
                     chute.append(lista)       
                 return chute
-        return None    
-    def mod(chutes_certos):
-        """verifica valores de k e r que satisfazem a regra para todos os chutes e os retornam, caso exitam """
-        valores = [] #valores de [k,r] válidos para cada n em chutes_certos
+        return None
+
+def mod(chutes_certos):
+        """retorna uma lista com as regras de resto comuns aos chutes numericos, caso existam """
+        valores = [] 
         for n in chutes_certos:
             for k in range(2,101):
                 for r in range(0,k):
                     if n%k == r:
                         valores.append([k,r])
-        comuns = [] # [k,r] comuns para todo n em chutees_certos
-        for [k,r] in valores:
+        comuns = [] 
+        for k,r in valores:
             for n in chutes_certos:
                 if n%k != r:
                     break
-            else: #quando o loop não quebrar, ou seja, houver [k,r] valido para todo n
+            else: 
                 if [k,r] not in comuns:
                     comuns.append([k,r])       
         if len(comuns) != 0:
             chute = []
-            for [k,r] in comuns:
-                lista = ["mod"] + [k,r]
+            for k,r in comuns:
+                lista = ["mod",k,r]
                 chute.append(lista)
             return chute   
-        return None   
+        return None
+
+def chute_regra(chutes_certos):
+    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
+    global TRY_INTERVAL
     
+    #evitar repetições de chute
     if pot(chutes_certos):
         for chute in pot(chutes_certos):
             if chute not in CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]:
-                print(chute)
                 return chute
         
     if mod(chutes_certos):   
@@ -190,7 +176,7 @@ def chute_regra(chutes_certos):
     chute = ["int", a, b]
     return chute    
         
-def player(number_guesses, rule_guesses):
+def player(number_guesses, rule_guesses):                   
 
     """Função principal do jogador.     
     """
