@@ -154,9 +154,7 @@ def mod(chutes_certos):
         return None
 
 def chute_regra(chutes_certos):
-    """retorna um chute de regra com base na lista de chutes de numeros corretos"""
-    global TRY_INTERVAL
-    
+    """retorna um chute de regra com base na lista de chutes de numeros corretos"""    
     #evitar repetições de chute
     if pot(chutes_certos):
         for chute in pot(chutes_certos):
@@ -168,7 +166,6 @@ def chute_regra(chutes_certos):
             if chute not in CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]:
                 return chute
     
-    #TODO: fazer intervalo
     NUMEROS_CORRETOS.sort()
     a = chutes_certos[0]
     b = chutes_certos[-1]
@@ -178,17 +175,14 @@ def chute_regra(chutes_certos):
         
 def player(number_guesses, rule_guesses):                   
 
-    """Função principal do jogador.     
-    """
+    """Função principal do jogador."""
     try:
         global CHAMADAS, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END, INTERVAL_SUBINDO
         CHAMADAS+=1
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
-        """
-        CHUTE DE REGRA
-        """
+        """CHUTE DE REGRA"""
         if CHAMADAS_REGRA == 1:
             NUMEROS_CORRETOS.sort()
             N_CORRETOS_COPY = NUMEROS_CORRETOS.copy()
