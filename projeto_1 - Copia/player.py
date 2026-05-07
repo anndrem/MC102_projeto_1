@@ -102,7 +102,19 @@ def chute_numerico(is_first):
         MAIOR = ultimo_numero
     else:    
         MENOR = ultimo_numero
-        return ultimo_numero * 2
+
+    return buscar_intervalo()
+    
+def interval(subindo):
+    global TRY_INTERVAL_END, TRY_INTERVAL_START, N_CORRETOS_COPY
+
+    if subindo:
+        TRY_INTERVAL_END+=1
+        extremo = N_CORRETOS_COPY[-1] + TRY_INTERVAL_END
+    else:
+        TRY_INTERVAL_START-=1
+        extremo = N_CORRETOS_COPY[0] + TRY_INTERVAL_START
+    return extremo
 
 def pot(chutes_certos):
         """retorna uma lista com as regras de potência comuns aos chutes numericos, caso existam"""
@@ -171,18 +183,21 @@ def chute_regra(chutes_certos):
     b = chutes_certos[-1]
 
     chute = ["int", a, b]
-    return chute    
-        
-def player(number_guesses, rule_guesses):                   
+    return chute  
+  
+def player(number_guesses, rule_guesses):
 
-    """Função principal do jogador."""
+    """Função principal do jogador.     
+    """
     try:
         global CHAMADAS, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END, INTERVAL_SUBINDO
         CHAMADAS+=1
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
 
-        """CHUTE DE REGRA"""
+        """
+        CHUTE DE REGRA
+        """
         if CHAMADAS_REGRA == 1:
             NUMEROS_CORRETOS.sort()
             N_CORRETOS_COPY = NUMEROS_CORRETOS.copy()
@@ -238,4 +253,3 @@ def player(number_guesses, rule_guesses):
     except Exception:
         print('Erro no código: ')
         traceback.print_exc()
-
