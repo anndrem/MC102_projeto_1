@@ -64,6 +64,7 @@ TRY_INTERVAL_END = 0
 TRY_INTERVAL_START = 0
 
 def buscar_intervalo():
+    """ADAPTACAO DE BUSCA BINARIA: CHUTANDO SEMPRE O MEIO"""
     global MENOR, MAIOR
     if MENOR >= MAIOR:
         MENOR=MAIOR
@@ -73,6 +74,7 @@ def buscar_intervalo():
     return meio 
 
 def chute_numerico(is_first):
+    """CONTROLANDO O CHUTE NUMERICO"""
     global MENOR, MAIOR, PRESO_NO_INTERVALO
 
     if is_first: return 50_000
@@ -104,13 +106,13 @@ def chute_numerico(is_first):
     
 def interval(subindo):
     global TRY_INTERVAL_END, TRY_INTERVAL_START, N_CORRETOS_COPY
-
+    """AUMENTANDO E/OU DIMINUINDO AS EXTREMIDADES DOS NUMEROS CORRETOS PARA ENCONTRAR O INTERVALO"""
     if subindo:
         TRY_INTERVAL_END+=1
         extremo = N_CORRETOS_COPY[-1] + TRY_INTERVAL_END
     else:
-        TRY_INTERVAL_START-=1
-        extremo = N_CORRETOS_COPY[0] + TRY_INTERVAL_START
+        TRY_INTERVAL_START+=1
+        extremo = N_CORRETOS_COPY[0] - TRY_INTERVAL_START
     return extremo
 
 def pot(chutes_certos):
@@ -183,11 +185,9 @@ def chute_regra(chutes_certos):
     return chute  
   
 def player(number_guesses, rule_guesses):
-
-    """Função principal do jogador.     
-    """
+    """Função principal do jogador."""
     try:
-        global CHAMADAS, CHAMADAS_REGRA, MENOR, MAIOR, NUMEROS_CORRETOS, TRY_INTERVAL_START, N_CORRETOS_COPY, TRY_INTERVAL_END
+        global CHAMADAS, CHAMADAS_REGRA, NUMEROS_CORRETOS, N_CORRETOS_COPY
         CHAMADAS+=1
         CHUTES_ANTERIORES[CHUTE_DE_REGRA].append(rule_guesses)
         CHUTES_ANTERIORES[CHUTE_DE_NUMERO].append(number_guesses)
@@ -198,6 +198,7 @@ def player(number_guesses, rule_guesses):
         
         regra = CHUTES_ANTERIORES[CHUTE_DE_REGRA][0]
 
+        """CHUTANDO INTERVALO"""
         if CHAMADAS_REGRA > 1 and regra[-1][0] == 'int':
             CHAMADAS+=1
             ultimo_numero = number_guesses[-1][0]
@@ -230,13 +231,8 @@ def player(number_guesses, rule_guesses):
         ultimo_numero = 1 if CHAMADAS == 1 else number_guesses
         n = chute_numerico(is_first)
 
-        if n <= 0:
-            MAIOR = ultimo_numero[-1][0]            
-            n = buscar_intervalo()
-        elif n > 100_000:
-            MAIOR = 100_000
-            MENOR = 0
-            n = buscar_intervalo()
+        if n < 1: n = buscar_intervalo(False)
+        elif n > 100_000: n = 50_000
 
         return [CHUTE_DE_NUMERO, n]
         
