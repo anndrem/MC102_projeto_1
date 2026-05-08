@@ -217,8 +217,8 @@ Para a avaliação de sua função `player`, cinco torneios serão rodados em se
     - **0% (Insuficiente)**: 50% > `m`.
 
 3. **Média de tentativas**, dada em função da média `t` das médias de tentativas por partida dos cinco torneios. A nota pode ser:
-    - **100% (Ótima)**: 25 >= `t`.
-    - **70% (Satisfatória)**: 50 >= `t` > 25.
-    - **30% (Média)**: 150 >= `t` > 50.
-    - **0% (Insuficiente)**: `t` > 150.
+    - **100% (Ótima)**: 50 >= `t`.
+    - **70% (Satisfatória)**: 75 >= `t` > 50.
+    - **30% (Média)**: 150 >= `t` > 75.
+    - **0% (Insuficiente)**: `t` > 175.
 
